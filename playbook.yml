@@ -1,0 +1,6 @@
+---
+  - name: "mediawiki orchestration"
+    hosts: localhost
+    connection: local
+    roles:
+      - orchestrator
