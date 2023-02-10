@@ -1,0 +1,12 @@
+---
+# defaults file for orchestrator
+git_url: "https://github.com"
+git_org: "challenge-2023"
+lz_repo: "mediawiki-landing-zone"
+eks_repo: "mediawiki-eks"
+argo_repo: "mediawiki-argocd"
+aws_access_key:
+aws_secret_key:
+cust_id: "abc"
+state: "present"
+aws_account: "210489297222"

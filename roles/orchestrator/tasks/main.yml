@@ -1,0 +1,54 @@
+---
+  - name: creating folder for landing zone terraform code
+    file:
+      path: "{{role_path}}/files/terraform/{{lz_repo}}"
+      state: directory
+
+  - name: cloning landing zone terraform repositories
+    git:
+      dest: "{{role_path}}/files/terraform/{{lz_repo}}"
+      repo: "{{git_url}}/{{git_org}}/{{lz_repo}}.git"
+
+  - name: deploying landing zone
+    terraform:
+      project_path: "{{role_path}}/files/terraform/{{lz_repo}}"
+      force_init: true
+      init_reconfigure: true
+      state: "{{state}}"
+      variables:
+          AWS_ACCESS_KEY: "{{aws_access_key}}"
+          AWS_SECRET_KEY: "{{aws_secret_key}}"
+          cust_id: "{{cust_id}}"
+
+#  - name: cloning eks terraform repositories
+#    git:
+#      dest: "{{role_path}}/files/terraform/"
+#      repo: {{git_url}}/{{git_org}}/{{eks_repo}}.git
+#
+#  - name: deploying eks cluster
+#    terraform:
+#      project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
+#      init_reconfigure: true
+#      state: {{state}}
+#      variables:
+#          AWS_ACCESS_KEY: {{aws_access_key}}
+#          AWS_SECRET_KEY: {{aws_secret_key}}
+#          cust_id: {{cust_id}}
+#  - name: setting iam role for eks service account
+#    ansible.builtin.shell:
+#      cmd: eksctl create iamserviceaccount   --cluster={{cust_id}}-eks --namespace=kube-system   --name=aws-load-balancer-controller   --role-name AmazonEKSLoadBalancerControllerRole   --attach-policy-arn=arn:aws:iam::{{aws_account}}:policy/AWSLoadBalancerControllerIAMPolicy --approve
+#
+#  - name: cloning argocd terraform repositories
+#    git:
+#      dest: "{{role_path}}/files/terraform/"
+#      repo: {{git_url}}/{{git_org}}/{{eks_repo}}.git
+#
+#  - name: deploying argocd
+#    terraform:
+#      project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
+#      init_reconfigure: true
+#      state: {{state}}
+#      variables:
+#          AWS_ACCESS_KEY: {{aws_access_key}}
+#          AWS_SECRET_KEY: {{aws_secret_key}}
+#          cust_id: {{cust_id}}
