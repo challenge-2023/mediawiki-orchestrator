@@ -36,7 +36,8 @@
     terraform:
       project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
       init_reconfigure: true
-      state: {{state}}
+      force_init: true
+      state: "{{state}}"
       variables:
           AWS_ACCESS_KEY: "{{aws_access_key}}"
           AWS_SECRET_KEY: "{{aws_secret_key}}"
@@ -54,12 +55,13 @@
   - name: cloning argocd terraform repositories
     git:
       dest: "{{role_path}}/files/terraform/{{argo_repo}}"
-      repo: "{{git_url}}/{{git_org}}/{{eks_repo}}.git"
+      repo: "{{git_url}}/{{git_org}}/{{argo_repo}}.git"
 
   - name: deploying argocd
     terraform:
       project_path: "{{role_path}}/files/terraform/{{argo_repo}}"
       init_reconfigure: true
+      force_init: true
       state: "{{state}}"
       variables:
           AWS_ACCESS_KEY: "{{aws_access_key}}"
