@@ -53,12 +53,12 @@
           cust_id: "{{cust_id}}"
     tags:
       - create
-
-  - name: setting iam role for eks service account
-    ansible.builtin.shell:
-      cmd: eksctl create iamserviceaccount   --cluster="{{cust_id}}-eks" --namespace=kube-system   --name=aws-load-balancer-controller   --role-name AmazonEKSLoadBalancerControllerRole   --attach-policy-arn=arn:aws:iam::{{aws_account}}:policy/AWSLoadBalancerControllerIAMPolicy --approve
-    tags:
-      - create
+# Disabling this task as we do not intent to create ingress
+#  - name: setting iam role for eks service account
+#    ansible.builtin.shell:
+#      cmd: eksctl create iamserviceaccount   --cluster="{{cust_id}}-eks" --namespace=kube-system   --name=aws-load-balancer-controller   --role-name AmazonEKSLoadBalancerControllerRole   --attach-policy-arn=arn:aws:iam::{{aws_account}}:policy/AWSLoadBalancerControllerIAMPolicy --approve
+#    tags:
+#      - create
   - name: creating folder for cloning argocd terraform code
     file:
       path: "{{role_path}}/files/terraform/{{argo_repo}}"
