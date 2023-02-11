@@ -85,6 +85,11 @@
           cust_id: "{{cust_id}}"
     tags:
       - create
+  - name: logging into eks cluster
+    ansible.builtin.shell:
+      cmd:  aws eks --region us-west-2 update-kubeconfig --name "{{cust_id}}-eks"
+    tags:
+      - create
 
   - name: Creating ArgoCD project
     kubernetes.core.k8s:
