@@ -123,18 +123,18 @@
     tags:
       - destroy
 
-#  - name: destroying eks cluster
-#    terraform:
-#      project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
-#      init_reconfigure: true
-#      force_init: true
-#      state: "{{state}}"
-#      variables:
-#          AWS_ACCESS_KEY: "{{aws_access_key}}"
-#          AWS_SECRET_KEY: "{{aws_secret_key}}"
-#          cust_id: "{{cust_id}}"
-#    tags:
-#      - destroy
+  - name: destroying eks cluster
+    terraform:
+      project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
+      init_reconfigure: true
+      force_init: true
+      state: "{{state}}"
+      variables:
+          AWS_ACCESS_KEY: "{{aws_access_key}}"
+          AWS_SECRET_KEY: "{{aws_secret_key}}"
+          cust_id: "{{cust_id}}"
+    tags:
+      - destroy
   - name: deleting folder for eks terraform code
     file:
       path: "{{role_path}}/files/terraform/{{eks_repo}}"
