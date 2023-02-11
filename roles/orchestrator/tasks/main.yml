@@ -3,13 +3,16 @@
     file:
       path: "{{role_path}}/files/terraform/{{lz_repo}}"
       state: directory
+    tags:
+      - create
 
 
   - name: cloning landing zone terraform repositories
     git:
       dest: "{{role_path}}/files/terraform/{{lz_repo}}"
       repo: "{{git_url}}/{{git_org}}/{{lz_repo}}.git"
-
+    tags:
+      - create
 
   - name: deploying landing zone
     terraform:
@@ -21,16 +24,22 @@
           AWS_ACCESS_KEY: "{{aws_access_key}}"
           AWS_SECRET_KEY: "{{aws_secret_key}}"
           cust_id: "{{cust_id}}"
+    tags:
+      - create
 
   - name: creating folder for cloning eks terraform code
     file:
       path: "{{role_path}}/files/terraform/{{eks_repo}}"
       state: directory
+    tags:
+      - create
 
   - name: cloning eks terraform repositories
     git:
       dest: "{{role_path}}/files/terraform/{{eks_repo}}"
       repo: "{{git_url}}/{{git_org}}/{{eks_repo}}.git"
+    tags:
+      - create
 
   - name: deploying eks cluster
     terraform:
@@ -42,20 +51,27 @@
           AWS_ACCESS_KEY: "{{aws_access_key}}"
           AWS_SECRET_KEY: "{{aws_secret_key}}"
           cust_id: "{{cust_id}}"
+    tags:
+      - create
 
   - name: setting iam role for eks service account
     ansible.builtin.shell:
       cmd: eksctl create iamserviceaccount   --cluster="{{cust_id}}-eks" --namespace=kube-system   --name=aws-load-balancer-controller   --role-name AmazonEKSLoadBalancerControllerRole   --attach-policy-arn=arn:aws:iam::{{aws_account}}:policy/AWSLoadBalancerControllerIAMPolicy --approve
-
+    tags:
+      - create
   - name: creating folder for cloning argocd terraform code
     file:
       path: "{{role_path}}/files/terraform/{{argo_repo}}"
       state: directory
+    tags:
+      - create
 
   - name: cloning argocd terraform repositories
     git:
       dest: "{{role_path}}/files/terraform/{{argo_repo}}"
       repo: "{{git_url}}/{{git_org}}/{{argo_repo}}.git"
+    tags:
+      - create
 
   - name: deploying argocd
     terraform:
@@ -67,11 +83,15 @@
           AWS_ACCESS_KEY: "{{aws_access_key}}"
           AWS_SECRET_KEY: "{{aws_secret_key}}"
           cust_id: "{{cust_id}}"
+    tags:
+      - create
 
   - name: Creating ArgoCD project
     kubernetes.core.k8s:
       state: present
       src: "{{role_path}}/files/terraform/{{argo_repo}}/apps/project.yaml"
+    tags:
+      - create
 
   - name: Create a mediawiki namespace
     kubernetes.core.k8s:
@@ -79,17 +99,28 @@
       api_version: v1
       kind: Namespace
       state: present
+    tags:
+      - create
 
   - name: Creating ArgoCD application
     kubernetes.core.k8s:
       state: present
       src: "{{role_path}}/files/terraform/{{argo_repo}}/apps/app.yaml"
+    tags:
+      - create
 
 ## Destroy tasks start here
 
-#  - name: destroying argocd
+  - name: deleting folder for argocd terraform code
+    file:
+      path: "{{role_path}}/files/terraform/{{argo_repo}}"
+      state: absent
+    tags:
+      - destroy
+
+#  - name: destroying eks cluster
 #    terraform:
-#      project_path: "{{role_path}}/files/terraform/{{argo_repo}}"
+#      project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
 #      init_reconfigure: true
 #      force_init: true
 #      state: "{{state}}"
@@ -99,25 +130,6 @@
 #          cust_id: "{{cust_id}}"
 #    tags:
 #      - destroy
-#  - name: deleting folder for argocd terraform code
-#    file:
-#      path: "{{role_path}}/files/terraform/{{argo_repo}}"
-#      state: absent
-#    tags:
-#      - destroy
-
-  - name: destroying eks cluster
-    terraform:
-      project_path: "{{role_path}}/files/terraform/{{eks_repo}}"
-      init_reconfigure: true
-      force_init: true
-      state: "{{state}}"
-      variables:
-          AWS_ACCESS_KEY: "{{aws_access_key}}"
-          AWS_SECRET_KEY: "{{aws_secret_key}}"
-          cust_id: "{{cust_id}}"
-    tags:
-      - destroy
   - name: deleting folder for eks terraform code
     file:
       path: "{{role_path}}/files/terraform/{{eks_repo}}"
